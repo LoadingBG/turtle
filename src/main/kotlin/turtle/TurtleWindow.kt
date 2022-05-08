@@ -5,26 +5,41 @@ import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.WindowConstants
 
-fun createPlayground(width: Int = 400, height: Int = width, xZero: Int = width / 2, yZero: Int = height / 2, code: Turtle.() -> Unit) {
+fun createPlayground(
+    width: Int = 400,
+    height: Int = width,
+    xZero: Int = width / 2,
+    yZero: Int = height / 2,
+    code: Turtle.() -> Unit
+) {
     EventQueue.invokeLater {
         val frame = JFrame("Turtle")
         frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
-        val canvas = Canvas(width, height)
+        val canvas = Canvas(width, height, xZero, yZero)
         frame.add(canvas)
 
         frame.pack()
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
 
-        code(Turtle(canvas, xZero.toDouble(), yZero.toDouble()))
+        code(canvas.turtle)
     }
 }
 
-class Canvas(width: Int, height: Int, private val shapes: MutableList<TurtleShape> = mutableListOf()) : JPanel() {
+class Canvas(
+    width: Int,
+    height: Int,
+    xZero: Int,
+    yZero: Int,
+    private val shapes: MutableList<TurtleShape> = mutableListOf()
+) : JPanel() {
+    val turtle: Turtle
+
     init {
         isOpaque = true
         preferredSize = Dimension(width, height)
+        turtle = Turtle(this, xZero.toDouble(), yZero.toDouble())
     }
 
     override fun paintComponent(g: Graphics) {
@@ -36,6 +51,16 @@ class Canvas(width: Int, height: Int, private val shapes: MutableList<TurtleShap
             g2d.stroke = BasicStroke(it.width)
             g2d.draw(it.toShape())
         }
+
+        g2d.color = Color.BLACK
+        g2d.stroke = BasicStroke(1F)
+        g2d.draw(
+            Polygon(
+                intArrayOf(turtle.x.toInt() - 20, turtle.x.toInt(), turtle.x.toInt() + 20),
+                intArrayOf(turtle.y.toInt(), turtle.y.toInt() - 20, turtle.y.toInt()),
+                3
+            )
+        )
     }
 
     fun addShape(shape: TurtleShape) {
