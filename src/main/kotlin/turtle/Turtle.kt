@@ -1,14 +1,12 @@
 package turtle
 
-import java.awt.BasicStroke
 import java.awt.Color
-import java.awt.Graphics2D
 import java.awt.geom.Line2D
 import kotlin.math.cos
 import kotlin.math.sin
 
 class Turtle(
-    private val graphics: Graphics2D,
+    private val canvas: Canvas,
     private val xZero: Double,
     private val yZero: Double,
     private var x: Double,
@@ -18,8 +16,8 @@ class Turtle(
     private var penColor: Color,
     private var penWidth: Float,
 ) {
-    constructor(graphics: Graphics2D, xZero: Double, yZero: Double) : this(
-        graphics,
+    constructor(canvas: Canvas, xZero: Double, yZero: Double) : this(
+        canvas,
         xZero,
         yZero,
         xZero,
@@ -35,9 +33,7 @@ class Turtle(
         val deltaY = steps * cos(angle)
 
         if (isPenDown) {
-            graphics.color = penColor
-            graphics.stroke = BasicStroke(penWidth)
-            graphics.draw(Line2D.Double(x, y, x + deltaX, y - deltaY))
+            canvas.addShape(TurtleLine(x, y, x + deltaX, y - deltaY, penColor, penWidth))
         }
 
         x += deltaX
@@ -45,6 +41,6 @@ class Turtle(
     }
 
     fun right(angle: Int) {
-        this.angle += angle
+        this.angle += Math.toRadians(angle.toDouble())
     }
 }

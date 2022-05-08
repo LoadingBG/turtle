@@ -1,29 +1,45 @@
 package turtle
 
-import java.awt.Canvas
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Graphics2D
-import java.awt.GridLayout
+import java.awt.*
 import javax.swing.JFrame
+import javax.swing.JPanel
 import javax.swing.WindowConstants
 
 fun createPlayground(width: Int = 400, height: Int = width, xZero: Int = width / 2, yZero: Int = height / 2, code: Turtle.() -> Unit) {
-    val frame = JFrame("Turtle")
-    frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-    frame.contentPane.preferredSize = Dimension(width, height)
-    frame.pack()
-    frame.setLocationRelativeTo(null)
-    frame.layout = GridLayout(1, 1)
+    EventQueue.invokeLater {
+        val frame = JFrame("Turtle")
+        frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
-    val canvas = Canvas()
-    frame.add(canvas)
+        val canvas = Canvas(width, height)
+        frame.add(canvas)
 
-    frame.isVisible = true
+        frame.pack()
+        frame.setLocationRelativeTo(null)
+        frame.isVisible = true
 
-    canvas.graphics.color = Color.BLACK
-    canvas.graphics.fillRect(0, 0, canvas.width, canvas.height)
-    println("Canvas ${canvas.width} x ${canvas.height}")
+        code(Turtle(canvas, xZero.toDouble(), yZero.toDouble()))
+    }
+}
 
-    code(Turtle(canvas.graphics as Graphics2D, xZero.toDouble(), yZero.toDouble()))
+class Canvas(width: Int, height: Int, private val shapes: MutableList<TurtleShape> = mutableListOf()) : JPanel() {
+    init {
+        isOpaque = true
+        preferredSize = Dimension(width, height)
+    }
+
+    override fun paintComponent(g: Graphics) {
+        super.paintComponent(g)
+
+        val g2d = g as Graphics2D
+        shapes.forEach {
+            g2d.color = it.color
+            g2d.stroke = BasicStroke(it.width)
+            g2d.draw(it.toShape())
+        }
+    }
+
+    fun addShape(shape: TurtleShape) {
+        shapes.add(shape)
+        repaint()
+    }
 }
