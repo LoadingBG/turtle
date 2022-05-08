@@ -1,7 +1,6 @@
 package turtle
 
 import java.awt.Color
-import java.awt.geom.Line2D
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -40,7 +39,17 @@ class Turtle(
         y -= deltaY
     }
 
+    fun backward(steps: Int) = forward(-steps)
+
     fun right(angle: Int) {
         this.angle += Math.toRadians(angle.toDouble())
+    }
+
+    fun left(angle: Int) = right(-angle)
+
+    fun clearScreen() {
+        canvas.reset()
+        x = xZero
+        y = yZero
     }
 }

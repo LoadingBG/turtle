@@ -42,4 +42,9 @@ class Canvas(width: Int, height: Int, private val shapes: MutableList<TurtleShap
         shapes.add(shape)
         repaint()
     }
+
+    fun reset() {
+        shapes.clear()
+        repaint()
+    }
 }
