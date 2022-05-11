@@ -83,5 +83,19 @@ fun main() {
 //        }
 //
 //        sheet()
+
+//        repeat(1000) {
+//            forward(10)
+//            right(random(360))
+//        }
+
+        fun Turtle.star(points: Int) {
+            repeat(points) {
+                forward(100)
+                right(180 - (180 / points))
+            }
+        }
+
+        star(pick(5, 7, 11))
     }
 }

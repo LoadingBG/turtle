@@ -7,6 +7,7 @@ import java.awt.event.ActionListener
 import java.awt.geom.Path2D
 import javax.swing.Timer
 import kotlin.math.*
+import kotlin.random.Random
 
 private const val TURTLE_STEP_DELAY = 25
 private const val TURTLE_ROTATION_DELAY = 10
@@ -132,7 +133,7 @@ class Turtle(
     fun left(angle: Int) = right(-angle)
 
     fun clearScreen() {
-        val timer = Timer(50) {
+        val timer = Timer(0) {
             x = xZero
             y = yZero
             rotationAngle = 0
@@ -142,11 +143,31 @@ class Turtle(
         actionQueue.addLast(timer)
     }
 
+    fun penUp() {
+        actionQueue.addLast(Timer(0) {
+            isPenDown = false
+        })
+    }
+
+    fun penDown() {
+        actionQueue.addLast(Timer(0) {
+            isPenDown = true
+        })
+    }
+
     fun repeat(times: Int, action: (Int) -> Unit) {
         1.rangeTo(times).forEach(action)
     }
 
     fun sqrt(number: Number): Double {
         return kotlin.math.sqrt(number.toDouble())
+    }
+
+    fun random(number: Int): Int {
+        return Random.nextInt(number)
+    }
+
+    fun <T> pick(vararg list: T): T {
+        return list[Random.nextInt(list.size)]
     }
 }
