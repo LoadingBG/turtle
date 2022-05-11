@@ -89,13 +89,34 @@ fun main() {
 //            right(random(360))
 //        }
 
-        fun Turtle.star(points: Int) {
-            repeat(points) {
-                forward(100)
-                right(180 - (180 / points))
+//        fun Turtle.star(points: Int) {
+//            repeat(points) {
+//                forward(100)
+//                right(180 - (180 / points))
+//            }
+//        }
+//
+//        star(pick(5, 7, 11))
+
+        fun Turtle.square() {
+            repeat(4) {
+                forward(50)
+                right(90)
             }
         }
 
-        star(pick(5, 7, 11))
+        fun Turtle.setPen(brightness: Int) {
+            setPenColor(255, 255 - brightness, brightness)
+        }
+
+        fun Turtle.squareFlower() {
+            repeat(64) {
+                setPen(it * 4 - 1)
+                right(360 / 64)
+                square()
+            }
+        }
+
+        squareFlower()
     }
 }

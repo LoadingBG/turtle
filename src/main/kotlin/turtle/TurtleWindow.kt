@@ -27,11 +27,18 @@ fun createPlayground(
 class Canvas(
     width: Int, height: Int, private val shapes: MutableList<TurtleShape> = mutableListOf()
 ) : JPanel() {
+    var bgColor: Color
+        get() = background
+        set(newColor) {
+            shapes.clear()
+            background = newColor
+        }
     val turtle: Turtle
 
     init {
         isOpaque = true
         preferredSize = Dimension(width, height)
+        bgColor = Color.WHITE
         turtle = Turtle(this, width / 2.0, height / 2.0)
     }
 

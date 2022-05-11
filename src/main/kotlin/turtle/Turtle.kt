@@ -6,11 +6,32 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.geom.Path2D
 import javax.swing.Timer
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sign
+import kotlin.math.sin
 import kotlin.random.Random
 
-private const val TURTLE_STEP_DELAY = 25
-private const val TURTLE_ROTATION_DELAY = 10
+private const val TURTLE_STEP_DELAY = 10
+private const val TURTLE_ROTATION_DELAY = 1
+private val COLOR_INDICES = mapOf(
+    0 to Color(0, 0, 0),
+    1 to Color(0, 0, 255),
+    2 to Color(0, 255, 0),
+    3 to Color(0, 255, 255),
+    4 to Color(255, 0, 0),
+    5 to Color(255, 0, 255),
+    6 to Color(255, 255, 0),
+    7 to Color(255, 255, 255),
+    8 to Color(155, 96, 59),
+    9 to Color(197, 136, 18),
+    10 to Color(100, 162, 64),
+    11 to Color(120, 187, 187),
+    12 to Color(255, 149, 119),
+    13 to Color(144, 113, 208),
+    14 to Color(255, 163, 0),
+    15 to Color(183, 183, 183),
+)
 
 /*
  * TODO:
@@ -32,16 +53,7 @@ class Turtle(
     private var penWidth: Float,
 ) : TurtleShape(Color.BLACK, 1F) {
     constructor(canvas: Canvas, xZero: Double, yZero: Double) : this(
-        canvas,
-        xZero,
-        yZero,
-        xZero,
-        yZero,
-        0,
-        ArrayDeque(),
-        true,
-        Color.BLACK,
-        1F
+        canvas, xZero, yZero, xZero, yZero, 0, ArrayDeque(), true, Color.BLACK, 1F
     )
 
     override fun toShape(): Shape {
@@ -138,21 +150,72 @@ class Turtle(
             y = yZero
             rotationAngle = 0
             canvas.reset()
+            animate()
         }
         timer.isRepeats = false
         actionQueue.addLast(timer)
     }
 
     fun penUp() {
-        actionQueue.addLast(Timer(0) {
+        val timer = Timer(0) {
             isPenDown = false
-        })
+            animate()
+        }
+        timer.isRepeats = false
+        actionQueue.addLast(timer)
     }
 
     fun penDown() {
-        actionQueue.addLast(Timer(0) {
+        val timer = Timer(0) {
             isPenDown = true
-        })
+            animate()
+        }
+        timer.isRepeats = false
+        actionQueue.addLast(timer)
+    }
+
+    fun setPenColor(colorIndex: Int) {
+        val timer = Timer(0) {
+            penColor = COLOR_INDICES[colorIndex] ?: penColor
+            animate()
+        }
+        timer.isRepeats = false
+        actionQueue.addLast(timer)
+    }
+
+    fun setPenColor(red: Int, green: Int, blue: Int) {
+        val timer = Timer(0) {
+            penColor = try {
+                Color(red, green, blue)
+            } catch (e: IllegalArgumentException) {
+                penColor
+            }
+            animate()
+        }
+        timer.isRepeats = false
+        actionQueue.addLast(timer)
+    }
+
+    fun setScreenColor(colorIndex: Int) {
+        val timer = Timer(0) {
+            canvas.bgColor = COLOR_INDICES[colorIndex] ?: canvas.bgColor
+            animate()
+        }
+        timer.isRepeats = false
+        actionQueue.addLast(timer)
+    }
+
+    fun setScreenColor(red: Int, green: Int, blue: Int) {
+        val timer = Timer(0) {
+            canvas.bgColor = try {
+                Color(red, green, blue)
+            } catch (e: IllegalArgumentException) {
+                canvas.bgColor
+            }
+            animate()
+        }
+        timer.isRepeats = false
+        actionQueue.addLast(timer)
     }
 
     fun repeat(times: Int, action: (Int) -> Unit) {
